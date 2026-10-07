@@ -1,0 +1,6 @@
+---
+title: "p8105_hw2_nel2139"
+author: "Nicole Lewis"
+date: "2026-10-07"
+output: github_document
+---
