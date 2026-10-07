@@ -121,7 +121,8 @@ mr_trash_df = read_excel(
   filter(!is.na(dumpster)) |> 
   mutate(
     sports_balls = as.integer(round(sports_balls)),
-    year = as.numeric(year))
+    year = as.numeric(year),
+    trash_wheel = "mr_trash_wheel")
 ```
 
 Professor Trash Wheel 
@@ -133,9 +134,9 @@ prof_trash_df = read_excel(
   range = "A2:M139",
   na = c("", "NA", "dive")) |> 
   janitor::clean_names() |> 
-  filter(!is.na(dumpster))
+  filter(!is.na(dumpster)) |> 
+  mutate(trash_wheel = "prof_trash_wheel")
 ```
-
 
 Gwynnda
 
@@ -146,7 +147,9 @@ gwynnda_df = read_excel(
   range = "A2:L394",
   na = c("", "NA")) |> 
   janitor::clean_names() |> 
-  filter(!is.na(dumpster))
+  filter(!is.na(dumpster)) |> 
+  mutate(trash_wheel = "gwynnda")
 ```
+
 
 
