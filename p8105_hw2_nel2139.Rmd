@@ -115,13 +115,38 @@ Mr. Trash Wheel
 mr_trash_df = read_excel(
   "./data/202610 Trash Wheel Collection Data.xlsx", 
   sheet = "Mr. Trash Wheel",
-  skip = 1) |> 
+  range = "A2:N742",
+  na = c("", "NA")) |> 
   janitor::clean_names() |> 
   filter(!is.na(dumpster)) |> 
-  mutate(sports_balls = as.integer(round(sports_balls)))
+  mutate(
+    sports_balls = as.integer(round(sports_balls)),
+    year = as.numeric(year))
 ```
 
 Professor Trash Wheel 
 
+```{r}
+prof_trash_df = read_excel(
+  "./data/202610 Trash Wheel Collection Data.xlsx", 
+  sheet = "Professor Trash Wheel",
+  range = "A2:M139",
+  na = c("", "NA", "dive")) |> 
+  janitor::clean_names() |> 
+  filter(!is.na(dumpster))
+```
+
+
+Gwynnda
+
+```{r}
+gwynnda_df = read_excel(
+  "./data/202610 Trash Wheel Collection Data.xlsx", 
+  sheet = "Gwynnda the Good Wheel of the W",
+  range = "A2:L394",
+  na = c("", "NA")) |> 
+  janitor::clean_names() |> 
+  filter(!is.na(dumpster))
+```
 
 
