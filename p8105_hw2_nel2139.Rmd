@@ -190,6 +190,35 @@ mci_baseline_df =
   filter(current_age < age_at_onset | is.na(age_at_onset))
 ```
 
+The baseline data were imported with `read_csv()`. The first row of the datafile contains descriptions of each variable, so `skip = 1` was used to ensure this section was not included in the imported data, and that the second row was used as the column names. Participants who did not develop MCI during the follow up period have no age at onset, so their age at onset was recorded as `.` in the data file. These values were recoded to NA, which ensured that `age_at_onset` was treated as a numeric variable, rather than a character variable. Variable names were then cleaned and converted to snake case. Sex and APOE4 status were originally coded as 0 and 1 and therefore treated as numeric in R. Since these are categorical variables, they were recoded with `case_match()` as male/female and carrier/non-carrier, respectively, and converted to factor variables with `as.factor()`. Finally, `filter()` was used to remove participants who did not meet the inclusion criteria of no MCI at baseline. Participants whose `age_at_onset` was at or before their baseline `current_age` already had MCI at baseline and were removed (n=4), while participants with no age at onset were kept because they met the inclusion criteria; they were MCI-free at baseline and simply did not develop MCI during follow-up. Participants who did not develop MCI have `NA` for `age_at_onset`. This dataset contains demographic information for `r nrow(mci_baseline_df)` participants measured at the study baseline and includes `r ncol(mci_baseline_df)` variables: `id`, `current_age`, `sex`, years of `education`, `apoe4` carrier status, and `age_at_onset` of MCI. While the other variables were measured at baseline, `age_at_onset` was recorded during the follow-up period. 
 
+
+```{r}
+n_recruited = 
+  read_csv("./data/MCI_baseline.csv", skip = 1, na = c(".", "NA", "")) |> 
+  nrow()
+
+n_eligible = nrow(mci_baseline_df)
+
+n_excluded = n_recruited - n_eligible
+
+n_mci = 
+  mci_baseline_df |> 
+  filter(!is.na(age_at_onset)) |> 
+  nrow()
+```
+
+A total of `r n_recruited` participants were recruited. After excluding `r n_excluded` participants who had MCI at baseline, `r n_eligible` participants met the inclusion criteria, and `r n_mci` of these developed MCI during follow-up.
+
+The average baseline age is `r round(mean(pull(mci_baseline_df, current_age)), 2)` years. 
+
+```{r}
+prop_women_apoe4 = 
+  mci_baseline_df |> 
+  filter(sex == "female") |> 
+  summarize(prop = mean(apoe4 == "carrier"))
+```
+
+The proportion of women in the study who are APOE4 carriers is `r prop_women_apoe4`. 
 
 
