@@ -4,3 +4,52 @@ author: "Nicole Lewis"
 date: "2026-10-07"
 output: github_document
 ---
+
+## Load packages
+
+```{r setup}
+library(tidyverse)
+library(dplyr)
+```
+
+## Problem 1
+
+```{r}
+nyc_transit_df = 
+  read_csv(
+    "./data/NYC_Transit_Subway_Entrance_And_Exit_Data.csv", 
+    na = c("", "NA"), 
+     col_types = cols(
+      Route8  = col_character(),
+      Route9  = col_character(),
+      Route10 = col_character(),
+      Route11 = col_character())) |> 
+  janitor::clean_names() |> 
+  select(line:entry, vending, ada) |> 
+  mutate(
+    entry = case_match(
+      entry, 
+      "YES" ~ TRUE,
+      "NO" ~ FALSE
+    )
+  )
+nyc_transit_df
+dim(nyc_transit_df)
+```
+
+This dataset contains information about the NYC subway system including the subway `line`, `station_name`, `station_latitude`, `station_longitude`, the routes served at each station (stored across `route1` through `route11`), the `entrance_type`, whether `entry` is allowed, whether there is `vending`, and whether the station is `ada` compliant. To clean the data, I imported the CSV file using a relative path and treated blank cells as missing. Since `route1` through `route7` mostly listed letter trains like the A and N trains, they were treated as character variables in R. However, `route8` through `route11` only consisted of numbered trains like the 1 train so they were treated as numeric (dbl) in R. To ensure consistency, I reclassified `route8` through `route11` from numeric (double) to character variables, so that all route columns are the same type. I then cleaned the variable names, kept only the variables listed above, and converted `entry` from a character variable with YES/NO values to a logical variable with TRUE/FALSE values. The dataset has `r nrow(nyc_transit_df)` rows and `r ncol(nyc_transit_df)` columns. These data are not tidy because route is a single variable spread across 11 columns. In tidy data, each variable should have its own column, so the routes should instead be stored in one column, with a separate row for each route served. 
+
+Number of distinct stations
+
+```{r}
+n_stations = 
+  nyc_transit_df |> 
+  distinct(line, station_name) |> 
+  nrow()
+n_stations
+```
+
+
+There are `n_stations` distinct stations. 
+
+
