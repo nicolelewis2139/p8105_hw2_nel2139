@@ -165,3 +165,31 @@ For available data, the total weight of trash collected by Professor Trash Wheel
 
 
 ## Problem 3
+
+Baseline dataset 
+
+```{r}
+mci_baseline_df = 
+  read_csv("./data/MCI_baseline.csv",
+           skip = 1,
+           na = c(".", "NA", "")) |> 
+  janitor::clean_names() |> 
+  mutate(
+    sex = 
+      case_match(
+        sex, 
+        1 ~ "male",
+        0 ~ "female"),
+    sex = as.factor(sex),
+    apoe4 = 
+      case_match(
+        apoe4, 
+        1 ~ "carrier",
+        0 ~ "non-carrier"),
+    apoe4 = as.factor(apoe4)) |> 
+  filter(current_age < age_at_onset | is.na(age_at_onset))
+```
+
+
+
+
