@@ -49,7 +49,32 @@ n_stations =
 n_stations
 ```
 
+There are `r n_stations` distinct stations. 
 
-There are `n_stations` distinct stations. 
+ADA compliant stations
+
+```{r}
+n_ada_stations = 
+  nyc_transit_df |> 
+  filter(ada == TRUE) |> 
+  distinct(line, station_name) |> 
+  nrow()
+n_ada_stations
+```
+
+`r n_ada_stations` stations are ADA compliant.
+
+Proportion of station entrances/exits without vending that allow entrance
+
+```{r}
+prop_no_vending_entry = 
+  nyc_transit_df |> 
+  select(vending, entry) |> 
+  filter(vending == "NO") |> 
+  summarize(prop = sum(entry == TRUE) / n()) 
+prop_no_vending_entry
+```
+
+`r round(prop_no_vending_entry, 3)` of station entrances/exits without vending allow entrance.
 
 
