@@ -151,5 +151,15 @@ gwynnda_df = read_excel(
   mutate(trash_wheel = "gwynnda")
 ```
 
+Combine datasets
 
+```{r}
+trash_wheel_df = 
+  bind_rows(mr_trash_df, prof_trash_df, gwynnda_df) |> 
+  select(trash_wheel, everything())
+```
+
+The combined dataset contains data collected by three trash wheels in Baltimore: Mr. Trash Wheel, Professor Trash Wheel, and Gwynnda. It has `r nrow(trash_wheel_df)` observations and `r ncol(trash_wheel_df)` variables, where each observation is one dumpster of trash collected by a wheel. Key variables present in all three datasets include `trash_wheel` (which wheel collected the trash), `dumpster`, `month`, `year`, `date`, `weight_tons`, `volume_cubic_yards`, `homes_powered`, and counts of specific items such as `plastic_bottles`, `polystyrene`, `cigarette_butts`, `plastic_bags` and `wrappers`. Some items were only recorded for certain wheels: `sports_balls` is only available for Mr. Trash Wheel, and `glass_bottles` is not recorded for Gwynnda. The data span from `r min(trash_wheel_df$year)` to `r max(trash_wheel_df$year)`.
+
+For available data, the total weight of trash collected by Professor Trash Wheel was `r sum(prof_trash_df$weight_tons)` tons. The total number of cigarette butts collected by Gwynnda in June of 2022 was `r sum(filter(gwynnda_df, month == "June", year == 2022)$cigarette_butts)`
 
