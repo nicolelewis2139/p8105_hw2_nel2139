@@ -224,7 +224,6 @@ The proportion of women in the study who are APOE4 carriers is `r prop_women_apo
 Amyloid dataset 
 
 ```{r}
-
 mci_amyloid_df = 
   read_csv("./data/mci_amyloid.csv",
            skip = 1,
@@ -244,6 +243,19 @@ mci_amyloid_df =
 The amyloid dataset was imported with `read_csv()`. Like the baseline data, the first row of the datafile contains a description of the variables, so `skip = 1` was used to ensure this row was not included in the imported data, and that the second row was used as the column names. Missing amyloid ratio values were recorded as `NA` and `Na` in the data file, so `na = c("NA", "Na", "")` was used to read all of them as missing and ensure the amyloid ratios were classified as numeric. Variable names were then cleaned and converted to snake case and `study_id` was renamed to `id` to match the baseline dataset. The data were originally in wide format, with a separate column for the amyloid ratio at each time point. So, `pivot_longer` was used to convert the data into long format; the five time point columns were stacked into two columns, `years_since_baseline`, which records the time point, and `amyloid_ratio`, which records the measured ratio value. The time point variable was named `years_since_baseline` and treated as numeric because the description row of the datafile states that each time point is measured in years elapsed since the study baseline, which represents an amount of time which has numeric meaning. This label makes it clearer what the values represent. Then, the time point values were cleaned by removing the "time_" prefix, replacing "baseline" with 0, and converting the variable to numeric so that the `years_since_baseline` has values of 0, 2, 4, 6, and 8. This dataset contains `r n_distinct(mci_amyloid_df$id)` participants and `r nrow(mci_amyloid_df)` rows (one per participant per time point), with `r ncol(mci_amyloid_df)` variables. The variables included in this dataset are: `id`, `years_since_baseline`, and `amyloid_ratio`. The `amyloid_ratio` variable records the amyloid β 42/40 ratio, a biomarker that changes over time and has been linked to the manifestation of clinical symptoms of Alzheimer’s disease. For each participant, this ratio is recorded at baseline and at 2, 4, 6, and 8 years after baseline. However, there are `r sum(is.na(mci_amyloid_df$amyloid_ratio))` missing amyloid ratio values in total, and `r n_distinct(filter(mci_amyloid_df, is.na(amyloid_ratio))$id)` of participants have at least one missing time point. 
 
 
+Checking for unmatched participants
 
+```{r}
+anti_join(mci_baseline_df, mci_amyloid_df, by = "id")
+anti_join(mci_amyloid_df, mci_baseline_df, by = "id") |> distinct(id)
 
+excluded_bl_df = 
+  read_csv("./data/MCI_baseline.csv",
+           skip = 1,
+           na = c(".", "NA", "")) |> 
+  janitor::clean_names() |> 
+  filter(age_at_onset <= current_age)
+```
+
+8 participants appear only in the baseline dataset and have no amyloid ratio measurments recorded in the amyloid dataset. 16 participants appear only in the amyloid dataset and not in the baseline dataset. Of those 16, 4 (IDs `r pull(excluded_bl_df, id)`) were removed from the baseline dataset because they had MCI at or before baseline. 
 
