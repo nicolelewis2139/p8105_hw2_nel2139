@@ -257,5 +257,18 @@ excluded_bl_df =
   filter(age_at_onset <= current_age)
 ```
 
-8 participants appear only in the baseline dataset and have no amyloid ratio measurments recorded in the amyloid dataset. 16 participants appear only in the amyloid dataset and not in the baseline dataset. Of those 16, 4 (IDs `r pull(excluded_bl_df, id)`) were removed from the baseline dataset because they had MCI at or before baseline. 
+8 participants appear only in the baseline dataset and have no amyloid ratio measurements recorded in the amyloid dataset. 16 participants appear only in the amyloid dataset and not in the baseline dataset. Of those 16, 4 (IDs `r pull(excluded_bl_df, id)`) were removed from the baseline dataset because they had MCI at or before baseline. The remaining 12 have no record in the baseline dataset. 
+
+Combine baseline and amyloid mci datasets
+
+```{r}
+mci_combined_df = 
+  inner_join(mci_baseline_df, mci_amyloid_df, by = "id")
+
+mci_combined_df
+n_distinct(mci_combined_df$id)
+```
+
+The combined mci dataset contains `r n_distinct(mci_combined_df$id)` participants who appear in both the baseline and amyloid datasets, with `r nrow(mci_combined_df)` rows (one per participant per time point) and `r ncol(mci_combined_df)` variables; `id`, `current_age`, `sex`, years of `education`, `apoe4` carrier status, `age_at_onset`, `years_since_baseline`, and `amyloid_ratio`. Each participant's baseline demographic information is repeated across their five amyloid time points.
+
 
